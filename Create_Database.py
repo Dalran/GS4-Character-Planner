@@ -235,17 +235,19 @@ cur.execute("INSERT INTO Maneuvers VALUES ('Steely Resolve', 'RESOLVE', 'shield'
 cur.execute("INSERT INTO Maneuvers VALUES ('Tortoise Stance', 'TORTOISE', 'shield', 3, 3, 6, 9, 'NONE', 'NONE', 0,0,0,0,0,0,0,0,0,1,0, 'CM:Block Mastery:2') ")
 cur.execute("INSERT INTO Maneuvers VALUES ('Tower Shield Focus', 'TFOCUS', 'shield', 5, 4, 6, 8, 10, 12, 0,0,0,0,1,0,0,0,0,1,0, 'NONE') ")
 	
-cur.execute("INSERT INTO Maneuvers VALUES ('Crush Protection', 'CRUSH', 'armor', 5,  20, 30, 40, 50, 60,  0,0,0,0,0,0,0,0,0,1,0, 'NONE') ")
-cur.execute("INSERT INTO Maneuvers VALUES ('Puncture Protection', 'PUNCTURE', 'armor', 5,  20, 30, 40, 50, 60,  0,0,0,0,0,0,0,0,0,1,0, 'NONE') ")
-cur.execute("INSERT INTO Maneuvers VALUES ('Slash Protection', 'SLASH', 'armor', 5,  20, 30, 40, 50, 60,  0,0,0,0,0,0,0,0,0,1,0, 'NONE') ")
-cur.execute("INSERT INTO Maneuvers VALUES ('Armor Blessing', 'BLESSING', 'armor', 5,  20, 30, 40, 50, 60,  0,0,0,0,1,0,0,0,0,0,0, 'NONE') ")
-cur.execute("INSERT INTO Maneuvers VALUES ('Armored Casting', 'CASTING', 'armor', 5,  20, 30, 40, 50, 60,  0,0,0,0,1,0,0,0,0,0,0, 'NONE') ")
-cur.execute("INSERT INTO Maneuvers VALUES ('Armored Evasion', 'EVASION', 'armor', 5,  20, 30, 40, 50, 60,  0,0,0,0,0,0,1,0,0,0,0, 'NONE') ")
-cur.execute("INSERT INTO Maneuvers VALUES ('Armored Fluidity', 'FLUIDITY', 'armor', 5,  20, 30, 40, 50, 60,  0,0,0,0,1,0,0,0,0,0,0, 'NONE') ")
-cur.execute("INSERT INTO Maneuvers VALUES ('Armor Reinforcement', 'REINFORCE', 'armor', 5,  20, 30, 40, 50, 60,  0,0,0,0,0,0,0,0,0,1,0, 'NONE') ")
-cur.execute("INSERT INTO Maneuvers VALUES ('Armored Stealth', 'STEALTH', 'armor', 5,  20, 30, 40, 50, 60,  0,0,0,0,0,0,1,0,0,0,0, 'NONE') ")
-cur.execute("INSERT INTO Maneuvers VALUES ('Armor Support', 'SUPPORT', 'armor', 5,  20, 30, 40, 50, 60,  0,0,0,0,0,0,0,0,0,1,0, 'NONE') ")
 
+cur.execute("INSERT INTO Maneuvers VALUES ('Armor Blessing', 'BLESSING', 'armor', 5,  10, 15, 20, 25, 30,  0,0,0,0,1,0,0,0,0,0,0, 'NONE') ")
+cur.execute("INSERT INTO Maneuvers VALUES ('Armor Reinforcement', 'REINFORCE', 'armor', 5,  10, 15, 20, 25, 30,  0,0,0,0,0,0,0,0,0,1,0, 'NONE') ")
+cur.execute("INSERT INTO Maneuvers VALUES ('Armor Spike Mastery', 'SPIKEMASTERY', 'armor', 2,  10, 20, 'NONE','NONE','NONE,  0,0,0,0,1,0,1,0,0,1,0, 'CM:Spike Focus:2') ")
+cur.execute("INSERT INTO Maneuvers VALUES ('Armor Support', 'SUPPORT', 'armor', 5,  10, 15, 20, 25, 30,  0,0,0,0,1,0,1,0,0,1,0, 'NONE') ")
+cur.execute("INSERT INTO Maneuvers VALUES ('Armored Casting', 'CASTING', 'armor', 5,  10, 15, 20, 25, 30,  0,0,0,0,1,0,0,0,0,0,0, 'NONE') ")
+cur.execute("INSERT INTO Maneuvers VALUES ('Armored Evasion', 'EVASION', 'armor', 5,  10, 15, 20, 25, 30,  0,0,0,0,0,0,1,0,0,0,0, 'NONE') ")
+cur.execute("INSERT INTO Maneuvers VALUES ('Armored Fluidity', 'FLUIDITY', 'armor', 5,  10, 15, 20, 25, 30,  0,0,0,0,1,0,0,0,0,0,0, 'NONE') ")
+cur.execute("INSERT INTO Maneuvers VALUES ('Armored Stealth', 'STEALTH', 'armor', 5,  10, 15, 20, 25, 30,  0,0,0,0,0,0,1,0,0,0,0, 'NONE') ")
+
+cur.execute("INSERT INTO Maneuvers VALUES ('Crush Protection', 'CRUSH', 'armor', 5,  10, 15, 20, 25, 30,  0,0,0,0,0,0,0,0,0,1,0, 'NONE') ")
+cur.execute("INSERT INTO Maneuvers VALUES ('Puncture Protection', 'PUNCTURE', 'armor', 5,  10, 15, 20, 25, 30,  0,0,0,0,0,0,0,0,0,1,0, 'NONE') ")
+cur.execute("INSERT INTO Maneuvers VALUES ('Slash Protection', 'SLASH', 'armor', 5,  10, 15, 20, 25, 30,  0,0,0,0,0,0,0,0,0,1,0, 'NONE') ")
 
 # Creates the Weapons table which contains all the weapons and their attributes
 cur.execute("CREATE TABLE Weapons (name, weapon_type, base_weight, base_speed, minimum_speed, damage_type, str_du,  df_vs_cloth, df_vs_leather, df_vs_scale, df_vs_chain, df_vs_plate,  avd_1, avd_2,  avd_5, avd_6, avd_7, avd_8,  avd_9, avd_10, avd_11, avd_12,  avd_13, avd_14, avd_15, avd_16,  avd_17, avd_18, avd_19, avd_20  ) ")   
