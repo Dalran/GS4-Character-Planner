@@ -237,8 +237,8 @@ cur.execute("INSERT INTO Maneuvers VALUES ('Tower Shield Focus', 'TFOCUS', 'shie
 	
 
 cur.execute("INSERT INTO Maneuvers VALUES ('Armor Blessing', 'BLESSING', 'armor', 5,  10, 15, 20, 25, 30,  0,0,0,0,1,0,0,0,0,0,0, 'NONE') ")
-cur.execute("INSERT INTO Maneuvers VALUES ('Armor Reinforcement', 'REINFORCE', 'armor', 5,  10, 15, 20, 25, 30,  0,0,0,0,0,0,0,0,0,1,0, 'NONE') ")
-cur.execute("INSERT INTO Maneuvers VALUES ('Armor Spike Mastery', 'SPIKEMASTERY', 'armor', 2,  10, 20, 'NONE','NONE','NONE,  0,0,0,0,1,0,1,0,0,1,0, 'CM:Spike Focus:2') ")
+cur.execute("INSERT INTO Maneuvers VALUES ('Armor Reinforcement', 'REINFORCE', 'armor',    5,  10, 15, 20, 25, 30, 0,0,0,0,0,0,0,0,0,1,0, 'NONE') ")
+cur.execute("INSERT INTO Maneuvers VALUES ('Armor Spike Mastery', 'SPIKEMASTERY', 'armor', 2,  10, 20, 'NONE','NONE','NONE',0,0,0,0,1,0,1,0,0,1,0, 'CM:Spike Focus:2') ")
 cur.execute("INSERT INTO Maneuvers VALUES ('Armor Support', 'SUPPORT', 'armor', 5,  10, 15, 20, 25, 30,  0,0,0,0,1,0,1,0,0,1,0, 'NONE') ")
 cur.execute("INSERT INTO Maneuvers VALUES ('Armored Casting', 'CASTING', 'armor', 5,  10, 15, 20, 25, 30,  0,0,0,0,1,0,0,0,0,0,0, 'NONE') ")
 cur.execute("INSERT INTO Maneuvers VALUES ('Armored Evasion', 'EVASION', 'armor', 5,  10, 15, 20, 25, 30,  0,0,0,0,0,0,1,0,0,0,0, 'NONE') ")
