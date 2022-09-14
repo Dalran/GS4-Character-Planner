@@ -85,7 +85,7 @@ class Information_Dialog:
 '''
 
 #!/usr/bin/python
-
+import sys
 import tkinter
 import tkinter.filedialog
 import tkinter.font
@@ -93,6 +93,8 @@ import math
 import Pmw
 import re
 import collections
+if sys.version_info[1] >- 10:
+	collections.Callable = collections.abc.Callable
 import Calculations as calculations
 
 # The Character object holds all the values and objects related to the character from across all the panels.
