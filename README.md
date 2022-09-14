@@ -5,6 +5,14 @@ Original credit goes to Hymore246. He hasn't updated in a while so I decided to 
 
 Original Repo: https://github.com/Hymore246/GS4-Character-Planner
 
+## Windows Instructions
+1. Change to the directory for the project.
+2. Run  `python -m venv .venv`
+3. Activate the environment with the following command `.\.venv\Scripts\Activate.ps1`
+4. Get dependancies `pip install -r Requirements.txt`
+5. Build the database file `python Create_Database.py`
+6. Run the code `python Planner.py`
+
 ## OSX Instructions
 1. Intall [homebrew](http://brew.sh/)
 2. Install python3 `brew install python3`
@@ -16,3 +24,4 @@ Original Repo: https://github.com/Hymore246/GS4-Character-Planner
 DEPENDENCIES: python vers. 3, tk, python-pmw <br />
 $ python Create_Databse.py <br />
 $ python Planner.py <br />
+
