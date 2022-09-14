@@ -4,3 +4,12 @@ GS4_Planner.db
 
 #EDITOR FILES
 .editorconfig
+
+#cache files
+__pycache__
+
+#environment
+.venv
+
+#logs
+error log.txt

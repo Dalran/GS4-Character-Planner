@@ -62,7 +62,7 @@ import Calculations as calculations
 import numpy as np
 import matplotlib
 matplotlib.use('TkAgg')
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTk, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 
 
@@ -293,14 +293,14 @@ class Progression_Panel:
 		a = self.graph_figure.add_subplot(111)
 			
 		# a tk.DrawingArea
-		canvas = FigureCanvasTkAgg(self.graph_figure, master=myframe_inner)
-		canvas.show()
+		canvas = FigureCanvasTk(self.graph_figure, master=myframe_inner)
+		canvas.draw()
 		canvas.get_tk_widget().grid(row=0, column=0, columnspan=2, sticky="nw")
 		
 		# Creates the toolbar for the figure. At this time, the toolbar is the default one used Matplotlib. In the future, I might customize this
 		toolbar_frame = tkinter.Frame(myframe_inner)
 		toolbar_frame.grid(row=1, column=0, sticky="nw")
-		toolbar = NavigationToolbar2TkAgg(canvas, toolbar_frame)
+		toolbar = NavigationToolbar2Tk(canvas, toolbar_frame)
 		toolbar.update()
 		
 
@@ -352,7 +352,7 @@ class Progression_Panel:
 		a.set_xlabel("Level Axis")
 		a.set_ylabel("Value Axis")
 		
-		self.graph_figure.canvas.show()
+		self.graph_figure.canvas.draw()
 		self.graph_tooltip_text.set("")
 	
 	
@@ -692,7 +692,7 @@ class Progression_Panel:
 		
 
 		# Finally, show the the graph figure
-		self.graph_figure.canvas.show()
+		self.graph_figure.canvas.draw()
 
 
 	# Clicking any part of the graph will set the tooltip variable and display information in the tooltip frame
