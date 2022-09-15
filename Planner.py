@@ -21,7 +21,7 @@ try:
     import tkinter
     import Pmw
     import Globals as globals
-    import Statistics_Panel as StP
+    import StatisticsPanel as StP
     import Misc_Panel as MiP
     import Skills_Panel as SkP
     import Maneuvers_Panel as ManP
@@ -136,7 +136,7 @@ class Planner:
         #		self.pages['Summary'].grid(row=0, column=8)
 
         # Create each Panel. Each is added to the a global list so they can be referenced later
-        globals.panels['Statistics'] = StP.Statistics_Panel(self.pages['Statistics'])
+        globals.panels['Statistics'] = StP.StatisticsPanel(self.pages['Statistics'])
         globals.panels['Misc'] = MiP.Misc_Panel(self.pages['Misc'])
         globals.panels['Skills'] = SkP.Skills_Panel(self.pages['Skills'])
         globals.panels['Maneuvers'] = ManP.Maneuvers_Panel(self.pages['Maneuvers'])
@@ -146,8 +146,8 @@ class Planner:
         #		globals.panels['Summary'] = SumP.Summary_Panel(self.pages['Summary'])
 
         # Set up defaults
-        globals.panels['Statistics'].Change_Race("Human")
-        globals.panels['Statistics'].Change_Profession("Warrior")
+        globals.panels['Statistics'].change_race("Human")
+        globals.panels['Statistics'].change_profession("Warrior")
         self.panels_loaded = 1
 
     # At this time, this function is used to clear the Progression panel if the Loadout panel

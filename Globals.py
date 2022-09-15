@@ -291,10 +291,10 @@ class Character:
 			if read_mode == "character":
 				if parts[0] == "Profession":
 					stat_panel.profession_dd.set(parts[1])
-					stat_panel.Change_Profession(panels["Statistics"].profession_dd.get())  
+					stat_panel.change_profession(panels["Statistics"].profession_dd.get())
 				elif parts[0] == "Race":
 					stat_panel.race_dd.set(parts[1])		
-					stat_panel.Change_Race(panels["Statistics"].race_dd.get())		
+					stat_panel.change_race(panels["Statistics"].race_dd.get())
 				elif parts[0] == "Deity":
 					self.deity.set(parts[1])
 				elif parts[0] == "Attunement":
@@ -936,7 +936,7 @@ class Character:
 	def Update_Maneuvers(self):
 		global combat_maneuver_names, shield_maneuver_names, armor_maneuver_names, panels
 		man_panel = panels['Maneuvers']		
-		postcap_panel = panels['Post Cap']		
+		postcap_panel = panels['Post Cap']
 		prof = self.profession.name
 		
 		# Clear the maneuvers before adding the new maneuvers
@@ -946,7 +946,7 @@ class Character:
 		postcap_panel.dialog_combat_names_menu['menu'].delete(0, "end")
 		postcap_panel.dialog_armor_names_menu['menu'].delete(0, "end")
 		postcap_panel.dialog_shield_names_menu['menu'].delete(0, "end")
-		
+
 		if man_panel.armor_menu_size > 1:
 			man_panel.add_armor_order_menu['menu'].delete(1, "end")
 			if man_panel.armor_menu_size > 2:
@@ -967,22 +967,22 @@ class Character:
 			postcap_panel.add_armor_order_menu['menu'].delete(1, "end")
 			if postcap_panel.armor_menu_size > 2:
 				postcap_panel.edit_armor_order_menu['menu'].delete(1, "end")
-			postcap_panel.armor_menu_size = 1	
+			postcap_panel.armor_menu_size = 1
 		if postcap_panel.combat_menu_size > 1:
 			postcap_panel.add_combat_order_menu['menu'].delete(1, "end")
 			if postcap_panel.combat_menu_size > 2:
 				postcap_panel.edit_combat_order_menu['menu'].delete(1, "end")
-			postcap_panel.combat_menu_size = 1	
-		if postcap_panel.shield_menu_size > 1:		
+			postcap_panel.combat_menu_size = 1
+		if postcap_panel.shield_menu_size > 1:
 			postcap_panel.add_shield_order_menu['menu'].delete(1, "end")
-			if postcap_panel.shield_menu_size > 1:		
+			if postcap_panel.shield_menu_size > 1:
 				postcap_panel.edit_shield_order_menu['menu'].delete(1, "end")
-			postcap_panel.shield_menu_size = 1			
-		
-		postcap_panel.man_select_menu['menu'].delete(1, "end")	
+			postcap_panel.shield_menu_size = 1
+
+		postcap_panel.man_select_menu['menu'].delete(1, "end")
 		postcap_panel.ML_Frame.yview("moveto", 0, "units")
-		postcap_panel.MR_Frame.yview("moveto", 0, "units")	
-		
+		postcap_panel.MR_Frame.yview("moveto", 0, "units")
+
 		man_panel.man_select_menu['menu'].delete(0, "end")	
 		man_panel.ML_Frame.yview("moveto", 0, "units")
 		man_panel.MR_Frame.yview("moveto", 0, "units")		
