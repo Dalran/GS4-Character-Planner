@@ -18,6 +18,7 @@ import traceback
 import os
 import sqlite3
 import tkinter
+
 import Pmw
 import Globals as globals
 import StatisticsPanel as StP
@@ -33,12 +34,9 @@ from time import sleep
 from tkinter import messagebox
 
 
-def handle_unhandled_exception(e_type, e_value, e_traceback):
-    error_file = open('error.log', 'a')
-    #traceback.print_exc()
-    #traceback.print_exc(file=error_file)
-    print(e_value)
-    error_file.close()
+def handle_unhandled_exception(e_type, e_value, tb):
+    traceback_details = "\n".join(traceback.extract_tb(tb).format())
+    print(traceback_details)
 
 
 sys.excepthook = handle_unhandled_exception
@@ -75,6 +73,7 @@ class Planner:
         data = globals.db_cur.fetchall()
         for prof in data:
             globals.character.profession_list[prof[0]] = globals.Profession(prof)
+
     # Makes the top menu that appears horizontally across the top of the planner
     def Create_Top_Menubar(self):
         menubar = tkinter.Menu(self.parent)
@@ -93,13 +92,16 @@ class Planner:
     # Choosing to make a new charcter is the same thing as resetting every panel back to default.
     # Have each panel call their Clear methods and change the panel back to Statistics.
     def Menubar_Option_New_Character(self):
-        if not tkinter.messagebox.askyesno("New Character",
-                                           "Are you sure you want to start a new character?\nAll unsaved data will be lost."):
+        if not messagebox.askyesno("New Character",
+                                   "Are you sure you want to start a new character?\n"
+                                   "All unsaved data will be lost."):
             return
 
         globals.char_name = "New Character"
+
         for stat, obj in globals.character.statistics_list.items():
             obj.Set_To_Default()
+
         globals.panels['Misc'].Reset_Panel()
         globals.panels['Skills'].ClearAll_Button_Onclick()
         globals.panels['Maneuvers'].Clear_Button_Onclick("All")
@@ -128,7 +130,9 @@ class Planner:
                                         #       lowercommand = self.Notebook_OnHidePage,
                                         hull_width=300,
                                         hull_height=300,
+
                                         )
+
         globals.notebook.pack(fill='both', expand=1, padx=5, pady=5)
 
         # Create the pages (tabs) for each panel and add them to the notebook
@@ -148,8 +152,8 @@ class Planner:
         self.pages['Loadout'] = tkinter.Frame(page6, background="white")
 
         #		self.pages['Summary'] = tkinter.Frame(page8, background="white")
-        self.pages['Statistics'].grid(row=0, column=0)
-        self.pages['Misc'].grid(row=0, column=2)
+        self.pages['Statistics'].grid(row=0, column=1)
+        self.pages['Misc'].grid(row=0, column=0)
         self.pages['Skills'].grid(row=0, column=3)
         self.pages['Maneuvers'].grid(row=0, column=4)
         self.pages['Post Cap'].grid(row=0, column=5)
@@ -175,7 +179,7 @@ class Planner:
     def Notebook_OnHidePage(self, caller):
         if self.panels_loaded == 1:
             print("hide")
-            #self.pages[caller].grid_remove()
+            # self.pages[caller].grid_remove()
 
     def Planner_Onclose(self):
         if tkinter.messagebox.askokcancel("Quit", "Are you sure you want to quit? All unsaved data will be lost."):
@@ -191,7 +195,7 @@ def on_configure(e):
 
 # Start of the program. Unless the SQLite database exist it will exit. Otherwise, setup the database and create the Planner.
 
-if __name__ == "__main__":
+def main():
     if not os.path.isfile(globals.db_file):
         globals.root.title("It seems you have died, my friend.")
         tkinter.messagebox.showerror("Error",
@@ -206,5 +210,9 @@ if __name__ == "__main__":
         planner = Planner(globals.root)
         globals.root.bind("<Configure>", on_configure)
         globals.root.protocol("WM_DELETE_WINDOW", planner.Planner_Onclose)
+        root()
+        # globals.root.mainloop()
 
-        globals.root.mainloop()
+
+if __name__ == "__main__":
+    main()

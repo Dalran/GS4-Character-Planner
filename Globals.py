@@ -2267,8 +2267,8 @@ char_name = "New Character"
 root = tkinter.Tk()
 
 root.geometry("1140x600")
-root.resizable(0,0)
-notebook = ""
+root.resizable(False, False)
+notebook = None
 db_file = "GS4_Planner.db"
 db_con = ""
 db_cur = ""
@@ -2393,4 +2393,4 @@ summation_bonuses =[ [0],
 
 
 # Character global needs to be declared last since it uses all the globals decalared above
-character = Character();
+character = Character()
