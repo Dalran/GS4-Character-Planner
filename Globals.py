@@ -201,7 +201,6 @@ class Character:
 		man_panel = panels["Maneuvers"]
 		postcap_panel = panels["Post Cap"]
 		loadout_panel = panels["Loadout"]
-		progression_panel = panels["Progression"]
 #		summary_panel = panels["Summary"]
 		read_mode = ""
 

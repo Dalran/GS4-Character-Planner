@@ -175,11 +175,12 @@ class Planner:
     def Notebook_OnHidePage(self, caller):
         if self.panels_loaded == 1:
             print("hide")
-            self.pages[caller].grid_remove()
+            #self.pages[caller].grid_remove()
 
     def Planner_Onclose(self):
         if tkinter.messagebox.askokcancel("Quit", "Are you sure you want to quit? All unsaved data will be lost."):
-            globals.root.destroy()
+            globals.root.withdraw()
+            globals.root.after(1, globals.root.destroy())
 
 
 # Monkey hack for High-DPI mice

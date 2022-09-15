@@ -28,7 +28,6 @@ import Globals as globals
 # All resources derived from the statistics are also calculated here. PTP, MTP, Health, Mana, Stamina, Spirit
 class StatisticsPanel:
     def __init__(self, panel):
-
         self.total_exp_frame = None
         self.next_exp_frame = None
         self.mtp_frame = None
