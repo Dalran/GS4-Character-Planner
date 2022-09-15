@@ -26,8 +26,9 @@ import Globals as globals
 
 # Statistics Panel will show the growth of the 10 statistics in GS4 based on race/profession combination
 # All resources derived from the statistics are also calculated here. PTP, MTP, Health, Mana, Stamina, Spirit
-class StatisticsPanel:
-    def __init__(self, panel):
+class StatisticsPanel(tkinter.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
         self.total_exp_frame = None
         self.next_exp_frame = None
         self.mtp_frame = None
@@ -48,12 +49,12 @@ class StatisticsPanel:
         self.resource_footer_scrollframe = None
 
         # Create all the sub-frames of the panel
-        self.UL_Frame = self.create_statistics_header(panel)
-        self.ML_Frame = self.create_statistics_rows(panel)
-        self.LL_Frame = self.create_statistics_footer(panel)
-        self.UR_Frame = self.create_growth_header(panel)
-        self.MR_Frame = self.create_growth_rows(panel)
-        self.LR_Frame = self.create_growth_footer(panel)
+        self.UL_Frame = self.create_statistics_header(self)
+        self.ML_Frame = self.create_statistics_rows(self)
+        self.LL_Frame = self.create_statistics_footer(self)
+        self.UR_Frame = self.create_growth_header(self)
+        self.MR_Frame = self.create_growth_rows(self)
+        self.LR_Frame = self.create_growth_footer(self)
 
         # Make the frames visible
         self.UL_Frame.grid(row=0, column=0, sticky="nw")
@@ -216,17 +217,16 @@ class StatisticsPanel:
     # This frame holds several rows, one for each statistics, each with 101 cells representing levels 0-100. The rows
     # are created and stored with each Statistic object as part of the Character object.
     def create_growth_rows(self, panel):
-        i = 0
+
         self.training_middle_scrollframe = Pmw.ScrolledFrame(panel, usehullsize=1, hull_width=755, hull_height=233)
         self.training_middle_scrollframe_inner = self.training_middle_scrollframe.interior()
         self.training_middle_scrollframe.configure(hscrollmode="none", vscrollmode="none")
 
         # For each statistic, add their row.
-        for stat in globals.statistics:
+        for index, stat in enumerate(globals.statistics):
             globals.character.statistics_list[stat].stp_growth_row = globals.character.statistics_list[
                 stat].Create_Growth_Row_Frame(self.training_middle_scrollframe_inner)
-            globals.character.statistics_list[stat].stp_growth_row.grid(row=i, column=0)
-            i = i + 1
+            globals.character.statistics_list[stat].stp_growth_row.grid(row=index, column=0)
 
         return self.training_middle_scrollframe
 

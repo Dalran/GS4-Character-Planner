@@ -56,7 +56,7 @@ class Planner:
         self.Create_Top_Menubar()
 
         # Create the Notebook used to hold all the Panels and then create each Panel to be held in the Notebook
-        self.Create_Notebook(self)
+        self.create_notebook(self)
 
     def fetch_data(self):
         # Initialize the race list
@@ -116,64 +116,49 @@ class Planner:
     def Menubar_Option_Load_Character(self):
         #		if not tkinter.messagebox.askyesno("Load Character", "Are you sure you want to load a character? All unsaved data will be lost."):
         #			return
-        globals.character.Load_Character()
+        globals.character.load()
 
     # Save the current character plan in a character file
     def Menubar_Option_Save_Character(self):
-        globals.character.Save_Character()
+        globals.character.save()
 
     # Method uses a Python megawidget, Notebook, to create and hold all the Panels
-    def Create_Notebook(self, parent):
-        globals.notebook = Pmw.NoteBook(self.parent,
+    def create_notebook(self, parent):
+        notebook = Pmw.NoteBook(self.parent,
                                         tabpos='n',
-                                        #       createcommand = PrintOne('Create'),
-                                        #       lowercommand = self.Notebook_OnHidePage,
                                         hull_width=300,
                                         hull_height=300,
-
                                         )
 
-        globals.notebook.pack(fill='both', expand=1, padx=5, pady=5)
+        notebook.pack(fill='both', expand=1, padx=5, pady=5)
 
-        # Create the pages (tabs) for each panel and add them to the notebook
-        page1 = globals.notebook.add('Statistics')
-        page2 = globals.notebook.add('Misc')
-        page3 = globals.notebook.add('Skills')
-        page4 = globals.notebook.add('Maneuvers')
-        page5 = globals.notebook.add('Post Cap')
-        page6 = globals.notebook.add('Loadout')
+        self.pages['Statistics'] = StP.StatisticsPanel(notebook.add('Statistics'))
+        self.pages['Misc'] = tkinter.Frame(notebook.add('Misc'), background="white")
+        self.pages['Skills'] = tkinter.Frame(notebook.add('Skills'), background="white")
+        self.pages['Maneuvers'] = tkinter.Frame(notebook.add('Maneuvers'), background="white")
+        self.pages['Post Cap'] = tkinter.Frame(notebook.add('Post Cap'), background="white")
+        self.pages['Loadout'] = tkinter.Frame(notebook.add('Loadout'), background="white")
 
-        #		page8 = globals.notebook.add('Summary')
-        self.pages['Statistics'] = tkinter.Frame(page1, background="white")
-        self.pages['Misc'] = tkinter.Frame(page2, background="white")
-        self.pages['Skills'] = tkinter.Frame(page3, background="white")
-        self.pages['Maneuvers'] = tkinter.Frame(page4, background="white")
-        self.pages['Post Cap'] = tkinter.Frame(page5, background="white")
-        self.pages['Loadout'] = tkinter.Frame(page6, background="white")
-
-        #		self.pages['Summary'] = tkinter.Frame(page8, background="white")
-        self.pages['Statistics'].grid(row=0, column=1)
-        self.pages['Misc'].grid(row=0, column=0)
-        self.pages['Skills'].grid(row=0, column=3)
-        self.pages['Maneuvers'].grid(row=0, column=4)
-        self.pages['Post Cap'].grid(row=0, column=5)
-        self.pages['Loadout'].grid(row=0, column=6)
-        #		self.pages['Summary'].grid(row=0, column=8)
+        for index, key in enumerate(self.pages):
+            self.pages[key].grid(row=0, column=index)
 
         # Create each Panel. Each is added to the a global list so they can be referenced later
-        globals.panels['Statistics'] = StP.StatisticsPanel(self.pages['Statistics'])
-        globals.panels['Misc'] = MiP.Misc_Panel(self.pages['Misc'])
-        globals.panels['Skills'] = SkP.Skills_Panel(self.pages['Skills'])
-        globals.panels['Maneuvers'] = ManP.Maneuvers_Panel(self.pages['Maneuvers'])
-        globals.panels['Post Cap'] = PcP.PostCap_Panel(self.pages['Post Cap'])
-        globals.panels['Loadout'] = LdP.Loadout_Panel(self.pages['Loadout'])
+        globals.panels = {'Statistics': self.pages['Statistics'],
+                          'Misc': MiP.Misc_Panel(self.pages['Misc']),
+                          'Skills': SkP.Skills_Panel(self.pages['Skills']),
+                          'Maneuvers': ManP.Maneuvers_Panel(self.pages['Maneuvers']),
+                          'Post Cap': PcP.PostCap_Panel(self.pages['Post Cap']),
+                          'Loadout': LdP.Loadout_Panel(self.pages['Loadout'])}
 
-        #		globals.panels['Summary'] = SumP.Summary_Panel(self.pages['Summary'])
 
-        # Set up defaults
+        # This needs a full refactor.  Christ everything does
         globals.panels['Statistics'].change_race("Human")
         globals.panels['Statistics'].change_profession("Warrior")
+
         self.panels_loaded = 1
+
+        # Temp global shim /gag
+        globals.notebook = notebook
 
     # Temporary. This might be used to quickly hide or erase data from a Panel when it is hidden
     def Notebook_OnHidePage(self, caller):
@@ -184,7 +169,7 @@ class Planner:
     def Planner_Onclose(self):
         if tkinter.messagebox.askokcancel("Quit", "Are you sure you want to quit? All unsaved data will be lost."):
             globals.root.withdraw()
-            globals.root.after(1, globals.root.destroy())
+            globals.root.destroy()
 
 
 # Monkey hack for High-DPI mice
