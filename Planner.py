@@ -1,5 +1,5 @@
 # INDEX OF CLASSES AND METHODS
-'''
+"""
 class Planner
     def _init__(self, parent)
     def Create_Top_Menubar(self):
@@ -9,33 +9,39 @@ class Planner
     def Create_Notebook(self, parent):
     def Notebook_OnShowPage(self, caller):
     def Notebook_OnHidePage(self, caller):
-'''
+"""
 
 # !/usr/bin/python
-try:
-    import sys
+import sys
 
-    import traceback
-    import os
-    import sqlite3
-    import tkinter
-    import Pmw
-    import Globals as globals
-    import StatisticsPanel as StP
-    import Misc_Panel as MiP
-    import Skills_Panel as SkP
-    import Maneuvers_Panel as ManP
-    import PostCap_Panel as PcP
-    import Loadout_Panel as LdP
-    import Progression_Panel as ProgP
-    from time import sleep
-    # import Summary_Panel as SumP
-    from tkinter import messagebox
-except:
-    error_file = open('error log.txt', 'a')
-    traceback.print_exc()
-    traceback.print_exc(file=error_file)
+import traceback
+import os
+import sqlite3
+import tkinter
+import Pmw
+import Globals as globals
+import StatisticsPanel as StP
+import Misc_Panel as MiP
+import Skills_Panel as SkP
+import Maneuvers_Panel as ManP
+import PostCap_Panel as PcP
+import Loadout_Panel as LdP
+
+from time import sleep
+
+# import Summary_Panel as SumP
+from tkinter import messagebox
+
+
+def handle_unhandled_exception(e_type, e_value, e_traceback):
+    error_file = open('error.log', 'a')
+    #traceback.print_exc()
+    #traceback.print_exc(file=error_file)
+    print(e_value)
     error_file.close()
+
+
+sys.excepthook = handle_unhandled_exception
 
 
 # Planner is the primary window in the program that holds everything else.
@@ -46,12 +52,29 @@ class Planner:
         self.pages = {}
         self.panels_loaded = 0
 
+        self.fetch_data()
+
         # Create top Menubar used to Save and Load character builds
         self.Create_Top_Menubar()
 
         # Create the Notebook used to hold all the Panels and then create each Panel to be held in the Notebook
         self.Create_Notebook(self)
 
+    def fetch_data(self):
+        # Initialize the race list
+        globals.db_cur.execute("SELECT * FROM Races")
+        globals.db_con.commit()
+        data = globals.db_cur.fetchall()
+
+        for race in data:
+            globals.character.race_list[race[0]] = globals.Race(race)
+
+        # Initialize the profession list
+        globals.db_cur.execute("SELECT * FROM Professions")
+        globals.db_con.commit()
+        data = globals.db_cur.fetchall()
+        for prof in data:
+            globals.character.profession_list[prof[0]] = globals.Profession(prof)
     # Makes the top menu that appears horizontally across the top of the planner
     def Create_Top_Menubar(self):
         menubar = tkinter.Menu(self.parent)
@@ -103,7 +126,6 @@ class Planner:
                                         tabpos='n',
                                         #       createcommand = PrintOne('Create'),
                                         #       lowercommand = self.Notebook_OnHidePage,
-                                        raisecommand=self.Notebook_OnShowPage,
                                         hull_width=300,
                                         hull_height=300,
                                         )
@@ -116,7 +138,7 @@ class Planner:
         page4 = globals.notebook.add('Maneuvers')
         page5 = globals.notebook.add('Post Cap')
         page6 = globals.notebook.add('Loadout')
-        page7 = globals.notebook.add('Progression')
+
         #		page8 = globals.notebook.add('Summary')
         self.pages['Statistics'] = tkinter.Frame(page1, background="white")
         self.pages['Misc'] = tkinter.Frame(page2, background="white")
@@ -124,7 +146,7 @@ class Planner:
         self.pages['Maneuvers'] = tkinter.Frame(page4, background="white")
         self.pages['Post Cap'] = tkinter.Frame(page5, background="white")
         self.pages['Loadout'] = tkinter.Frame(page6, background="white")
-        self.pages['Progression'] = tkinter.Frame(page7, background="white")
+
         #		self.pages['Summary'] = tkinter.Frame(page8, background="white")
         self.pages['Statistics'].grid(row=0, column=0)
         self.pages['Misc'].grid(row=0, column=2)
@@ -132,7 +154,6 @@ class Planner:
         self.pages['Maneuvers'].grid(row=0, column=4)
         self.pages['Post Cap'].grid(row=0, column=5)
         self.pages['Loadout'].grid(row=0, column=6)
-        self.pages['Progression'].grid(row=0, column=7)
         #		self.pages['Summary'].grid(row=0, column=8)
 
         # Create each Panel. Each is added to the a global list so they can be referenced later
@@ -142,31 +163,13 @@ class Planner:
         globals.panels['Maneuvers'] = ManP.Maneuvers_Panel(self.pages['Maneuvers'])
         globals.panels['Post Cap'] = PcP.PostCap_Panel(self.pages['Post Cap'])
         globals.panels['Loadout'] = LdP.Loadout_Panel(self.pages['Loadout'])
-        globals.panels['Progression'] = ProgP.Progression_Panel(self.pages['Progression'])
+
         #		globals.panels['Summary'] = SumP.Summary_Panel(self.pages['Summary'])
 
         # Set up defaults
         globals.panels['Statistics'].change_race("Human")
         globals.panels['Statistics'].change_profession("Warrior")
         self.panels_loaded = 1
-
-    # At this time, this function is used to clear the Progression panel if the Loadout panel
-    # had it's data changed.
-    def Notebook_OnShowPage(self, caller):
-        if self.panels_loaded == 1:
-            if caller == "Progression":
-                if globals.LdP_Gear_List_Updated == 1:
-                    globals.panels['Progression'].Plot_Graph_Clear()
-                    globals.panels['Progression'].Gear_List_Populate_Lists()
-                    globals.panels['Progression'].graph_option_category.set("Physical Combat")
-                    globals.panels['Progression'].Graph_Option_Category_OnChange("Physical Combat")
-                    globals.LdP_Gear_List_Updated = 0
-                if globals.LdP_Effects_List_Updated == 1:
-                    globals.panels['Progression'].Plot_Graph_Clear()
-                    globals.panels['Progression'].Effects_List_Populate_List()
-                    globals.panels['Progression'].graph_option_category.set("Physical Combat")
-                    globals.panels['Progression'].Graph_Option_Category_OnChange("Physical Combat")
-                    globals.LdP_Effects_List_Updated = 0
 
     # Temporary. This might be used to quickly hide or erase data from a Panel when it is hidden
     def Notebook_OnHidePage(self, caller):
@@ -179,6 +182,7 @@ class Planner:
             globals.root.destroy()
 
 
+# Monkey hack for High-DPI mice
 def on_configure(e):
     if e.widget == globals.root:
         sleep(0.015)
@@ -187,23 +191,19 @@ def on_configure(e):
 # Start of the program. Unless the SQLite database exist it will exit. Otherwise, setup the database and create the Planner.
 
 if __name__ == "__main__":
-    try:
-        if not os.path.isfile(globals.db_file):
-            globals.root.title("It seems you have died, my friend.")
-            tkinter.messagebox.showerror("Error",
-                                         "GS4_Planner.db file not found.\nPlease make sure GS4_Planner.db is in the same directory as Planner.exe")
-        else:
-            globals.db_con = sqlite3.connect(globals.db_file)
-            globals.db_con.row_factory = sqlite3.Row
-            globals.db_cur = globals.db_con.cursor()
-            globals.root.title("%s %s - %s" % (globals.title, globals.version, globals.char_name))
-            planner = Planner(globals.root)
-            globals.root.bind("<Configure>", on_configure)
-            globals.root.protocol("WM_DELETE_WINDOW", planner.Planner_Onclose)
+    if not os.path.isfile(globals.db_file):
+        globals.root.title("It seems you have died, my friend.")
+        tkinter.messagebox.showerror("Error",
+                                     "GS4_Planner.db file not found.\n"
+                                     "Please make sure GS4_Planner.db is in the same directory as Planner.exe")
+    else:
 
-            globals.root.mainloop()
-    except:
-        error_file = open('error log.txt', 'a')
-        traceback.print_exc()
-        traceback.print_exc(file=error_file)
-        error_file.close()
+        globals.db_con = sqlite3.connect(globals.db_file)
+        globals.db_con.row_factory = sqlite3.Row
+        globals.db_cur = globals.db_con.cursor()
+        globals.root.title("%s %s - %s" % (globals.title, globals.version, globals.char_name))
+        planner = Planner(globals.root)
+        globals.root.bind("<Configure>", on_configure)
+        globals.root.protocol("WM_DELETE_WINDOW", planner.Planner_Onclose)
+
+        globals.root.mainloop()

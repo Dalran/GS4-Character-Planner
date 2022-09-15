@@ -38,8 +38,8 @@ class StatisticsPanel:
         self.race_dd = None
         self.ptp_frame = None
         self.profession_dd = None
-        self.ptp_bgs = ["lightgray" for _ in range(101)]
-        self.mtp_bgs = ["lightgray" for _ in range(101)]
+        self.ptp_bgs = ["light gray" for _ in range(101)]
+        self.mtp_bgs = ["light gray" for _ in range(101)]
 
         self.StP_radio_var = tkinter.IntVar()
 
@@ -64,20 +64,6 @@ class StatisticsPanel:
         self.MR_Frame.grid(row=1, column=1, sticky="nw")
         self.LR_Frame.grid(row=2, column=1, sticky="nw")
 
-        # Initialize the race list
-        globals.db_cur.execute("SELECT * FROM Races")
-        globals.db_con.commit()
-        data = globals.db_cur.fetchall()
-        for race in data:
-            globals.character.race_list[race[0]] = globals.Race(race)
-
-        # Initialize the profession list
-        globals.db_cur.execute("SELECT * FROM Professions")
-        globals.db_con.commit()
-        data = globals.db_cur.fetchall()
-        for prof in data:
-            globals.character.profession_list[prof[0]] = globals.Profession(prof)
-
         # initialize defaults
         self.StP_radio_var.set(1)
 
@@ -98,13 +84,13 @@ class StatisticsPanel:
 
         # Creates the Profession Menu and frames
         prof_frame = tkinter.Frame(frame_inner)
-        prof_name = tkinter.Label(prof_frame, width="20", anchor="w", text="Profession:")
+        # prof_name = tkinter.Label(prof_frame, width="20", anchor="w", text="Profession:")
         prof_options = tkinter.OptionMenu(prof_frame, self.profession_dd, *options1, command=self.change_profession)
         prof_options.config(width=15)
 
         # Creates the Race Menu and frames
         race_frame = tkinter.Frame(frame_inner)
-        race_name = tkinter.Label(race_frame, width="20", anchor="w", text="Race:")
+        # race_name = tkinter.Label(race_frame, width="20", anchor="w", text="Race:")
         race_options = tkinter.OptionMenu(prof_frame, self.race_dd, *options2, command=self.change_race)
         race_options.config(width=15)
 
@@ -142,9 +128,9 @@ class StatisticsPanel:
         frame_inner = frame.interior()
 
         for index, stat in enumerate(globals.statistics):
-            globals.character.statistics_list[stat].StP_statistic_row = globals.character.statistics_list[
+            globals.character.statistics_list[stat].stp_statistic_row = globals.character.statistics_list[
                 stat].Create_Statistic_Row_Frame(frame_inner, stat)
-            globals.character.statistics_list[stat].StP_statistic_row.grid(row=index, column=0)
+            globals.character.statistics_list[stat].stp_statistic_row.grid(row=index, column=0)
 
         return frame
 
@@ -238,9 +224,9 @@ class StatisticsPanel:
 
         # For each statistic, add their row.
         for stat in globals.statistics:
-            globals.character.statistics_list[stat].StP_growth_row = globals.character.statistics_list[
+            globals.character.statistics_list[stat].stp_growth_row = globals.character.statistics_list[
                 stat].Create_Growth_Row_Frame(self.training_middle_scrollframe_inner)
-            globals.character.statistics_list[stat].StP_growth_row.grid(row=i, column=0)
+            globals.character.statistics_list[stat].stp_growth_row.grid(row=i, column=0)
             i = i + 1
 
         return self.training_middle_scrollframe
@@ -362,7 +348,8 @@ class StatisticsPanel:
             globals.character.statistics_list[stat].adj = globals.character.race.statistic_adj[stat] + \
                                                           globals.character.profession.statistic_growth[stat]
 
-            if stat in globals.character.profession.prime_statistics and stat in globals.character.profession.mana_statistics:
+            if stat in globals.character.profession.prime_statistics \
+                    and stat in globals.character.profession.mana_statistics:
                 globals.character.statistics_list[stat].Set_Stat_Importance("prime/mana")
             elif stat in globals.character.profession.prime_statistics:
                 globals.character.statistics_list[stat].Set_Stat_Importance("prime")
