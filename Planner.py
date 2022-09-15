@@ -210,8 +210,7 @@ def main():
         planner = Planner(globals.root)
         globals.root.bind("<Configure>", on_configure)
         globals.root.protocol("WM_DELETE_WINDOW", planner.Planner_Onclose)
-        root()
-        # globals.root.mainloop()
+        globals.root.mainloop()
 
 
 if __name__ == "__main__":
