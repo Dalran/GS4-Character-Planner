@@ -55,10 +55,10 @@ class Maneuver:
     def Button_Onclick(self, result):
     def Create_ManP_schedule_row(self, parent):
     def Create_PcP_schedule_row(self, parent):
-    def Get_Cost_At_Rank(self, rank, prof_type):
-    def Get_Total_Cost_At_Rank(self, start_rank, new_ranks, prof_type):
-    def Train_New_Ranks(self, level, ranks, prof_type):
-    def Train_Postcap_Ranks(self, exp, ranks, prof_type):
+    def Get_Cost_At_Rank(self, rank):
+    def Get_Total_Cost_At_Rank(self, start_rank, new_ranks):
+    def Train_New_Ranks(self, level, ranks):
+    def Train_Postcap_Ranks(self, exp, ranks):
     def Postcap_Get_Total_Ranks_Closest_To_Interval(self, interval):
 
 class Gear:
@@ -1933,59 +1933,40 @@ class Maneuver:
         L5.bindtags("PcP_schedule")
 
     # Figures out how much it cost to train in the maneuver at "rank" rank.
-    # "prof_type" will determine if there is an additional cost to train in the skill. Only "combat" maneuvers have an extra cost.
-    def Get_Cost_At_Rank(self, rank, prof_type):
+    def Get_Cost_At_Rank(self, rank):
         if rank > len(self.cost_by_rank):
             return 9999
 
         if self.cost_by_rank[rank - 1] == "-":
             return "-"
 
-        if prof_type == "square" or self.type != "combat":
-            modifier = 1
-        elif prof_type == "semi":
-            modifier = 1.5
-        elif prof_type == "pure":
-            modifier = 2
 
-        return math.floor(int(self.cost_by_rank[rank - 1]) * modifier)
+        return math.floor(int(self.cost_by_rank[rank - 1]) )
 
     # Similar to Get_Cost_At_Rank, this method will figure out the CUMULATIVE cost to train "new_ranks" ranks in this manevuer starting at "start_rank" ranks.
-    # "prof_type" will determine if there is an additional cost to train in the skill. Only "combat" maneuvers have an extra cost.
-    # "armor" maneuvers just return their current rank cost
-    def Get_Total_Cost_At_Rank(self, start_rank, new_ranks, prof_type):
+    def Get_Total_Cost_At_Rank(self, start_rank, new_ranks):
         total = 0
         end_rank = start_rank + new_ranks
-
-        #		if self.type == "armor":
-        #			return self.cost_by_rank[end_rank - 1]
-
-        if prof_type == "square" or self.type != "combat":
-            modifier = 1
-        elif prof_type == "semi":
-            modifier = 1.5
-        elif prof_type == "pure":
-            modifier = 2
 
         if end_rank > 5 or self.cost_by_rank[end_rank - 1] == "-":
             return -1
 
         for i in range(start_rank, end_rank):
-            total += math.floor(int(self.cost_by_rank[i]) * modifier)
+            total += math.floor(int(self.cost_by_rank[i]) )
 
         return total
 
-    # This method will calculate the cost of training "ranks" ranks in this maneuver at "level". This cost is based on the existing skill ranks and what "prof_type" the characters profession is.
-    def Train_New_Ranks(self, level, ranks, prof_type):
+    # This method will calculate the cost of training "ranks" ranks in this maneuver at "level". This cost is based on the existing skill ranks.
+    def Train_New_Ranks(self, level, ranks):
         tcost = 0
         new_total_ranks = self.ranks_by_level[level].get() + ranks
 
         if level > 0:
             new_total_ranks += self.total_ranks_by_level[level - 1].get()
 
-        tcost = self.Get_Total_Cost_At_Rank(0, new_total_ranks, prof_type)
+        tcost = self.Get_Total_Cost_At_Rank(0, new_total_ranks)
         diff = self.total_ranks_by_level[level].get() - self.ranks_by_level[level].get()
-        ncost = self.Get_Total_Cost_At_Rank(diff, self.ranks_by_level[level].get() + ranks, prof_type)
+        ncost = self.Get_Total_Cost_At_Rank(diff, self.ranks_by_level[level].get() + ranks)
 
         self.cost_at_level[level].set(ncost)
         self.ranks_by_level[level].set(ranks + self.ranks_by_level[level].get())
@@ -1996,7 +1977,7 @@ class Maneuver:
             self.combined_cost_by_level[i].set(tcost)
 
     # Train addition ranks past level 100. "exp" is the experience interval these ranks will be trained in
-    def Train_Postcap_Ranks(self, exp, ranks, prof_type):
+    def Train_Postcap_Ranks(self, exp, ranks):
         global character
         training_by_interval = ""
         total_ranks = self.total_ranks_by_level[100].get()
@@ -2014,7 +1995,7 @@ class Maneuver:
             total_ranks += val
 
         # If the new ranks would go beyond the max ranks, send back an error number
-        cost = self.Get_Cost_At_Rank(total_ranks + 1, prof_type)
+        cost = self.Get_Cost_At_Rank(total_ranks + 1)
         if cost == "-":
             return 9999
 

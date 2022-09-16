@@ -512,7 +512,7 @@ class PostCap_Panel:
 			elif int(goal) + int(self.vars_dialog_precap_ranks.get().split(" ")[0]) > man.max_ranks:
 				self.vars_dialog_errormsg.set("ERROR: Goal + precap ranks cannot be greater than max maneuver ranks.")
 				return				
-			elif man.Get_Total_Cost_At_Rank(0, int(goal), globals.character.profession.type) > 101 and man.type == "combat":
+			elif man.Get_Total_Cost_At_Rank(0, int(goal)) > 101 and man.type == "combat":
 				self.vars_dialog_errormsg.set("ERROR: Combat Manevuer total cost cannot be greater than 101.")
 				return					
 
@@ -720,8 +720,6 @@ class PostCap_Panel:
 	
 	# When a new maneuver is clicked from the maneuver drop down menu in the popup dialog box, this method will update the dialog box with the newly chosen skill/maneuver
 	def Dialog_Menu_Onchange(self, name):
-		prof_type = globals.character.profession.type	
-
 		if self.goal_mode.get() == "Skills":
 			skill = globals.character.skills_list[name]
 			self.vars_dialog_skill.set(name)
@@ -744,7 +742,7 @@ class PostCap_Panel:
 			self.vars_dialog_armor_maneuver.set(name)		
 			
 		if self.goal_mode.get() != "Skills":
-			self.vars_dialog_info.set("%s,    %s,    %s,    %s,    %s" % (man.Get_Cost_At_Rank(1, prof_type), man.Get_Cost_At_Rank(2, prof_type), man.Get_Cost_At_Rank(3, prof_type), man.Get_Cost_At_Rank(4, prof_type), man.Get_Cost_At_Rank(5, prof_type)))		
+			self.vars_dialog_info.set("%s,    %s,    %s,    %s,    %s" % (man.Get_Cost_At_Rank(1), man.Get_Cost_At_Rank(2), man.Get_Cost_At_Rank(3), man.Get_Cost_At_Rank(4), man.Get_Cost_At_Rank(5)))		
 			self.vars_dialog_prerequisites.set(man.prerequisites_displayed)	
 			self.vars_dialog_precap_ranks.set(man.total_ranks_by_level[100].get())
 			
@@ -753,7 +751,6 @@ class PostCap_Panel:
 	# Clicking the Add button in the Build Header frame will show the Add version of this box
 	# Clicking an existing skills/maneuver's Edit button will show the Edit version of this box	and will populate it with the correct fields depending on the panel's style
 	def Add_Edit_Button_Onclick(self, location):
-		prof_type = globals.character.profession.type
 		man = ""
 		skill = ""
 		bskill = ""
@@ -896,7 +893,7 @@ class PostCap_Panel:
 			self.vars_dialog_label_maneuver_prerequisites.grid(row=2, column=0, sticky="w")
 			self.vars_dialog_maneuver_prerequisites.grid(row=2, column=1, sticky="w")
 			self.vars_dialog_prerequisites.set(char_man.prerequisites_displayed)	
-			self.vars_dialog_info.set("%s,    %s,    %s,    %s,    %s" % (char_man.Get_Cost_At_Rank(1, prof_type), char_man.Get_Cost_At_Rank(2, prof_type), char_man.Get_Cost_At_Rank(3, prof_type), char_man.Get_Cost_At_Rank(4, prof_type), char_man.Get_Cost_At_Rank(5, prof_type) ))	
+			self.vars_dialog_info.set("%s,    %s,    %s,    %s,    %s" % (char_man.Get_Cost_At_Rank(1), char_man.Get_Cost_At_Rank(2), char_man.Get_Cost_At_Rank(3), char_man.Get_Cost_At_Rank(4), char_man.Get_Cost_At_Rank(5) ))	
 			self.vars_dialog_precap_ranks.set(char_man.total_ranks_by_level[100].get())
 		else:
 			self.vars_dialog_label_skill_name.grid(row=0, column=0, sticky="w")
@@ -1080,8 +1077,7 @@ class PostCap_Panel:
 	# This method will also call on a number of different Skills and Maneuver object methods as well. Please review the Skills class and Maneuver class in Globals.py for more information.
 	def Plan_Training_Schedule(self, style):
 		abort_loops = 0; error_text = ""
-		schedule_names = []
-		prof_type = globals.character.profession.type				
+		schedule_names = []			
 		ending_exp = 7572500
 		pcost = 0
 		mcost = 0
@@ -1305,7 +1301,7 @@ class PostCap_Panel:
 					while ranks_taken < goal:
 						if abort_loops == 1:
 							break
-						cost = char_man.Get_Cost_At_Rank(precap_ranks + postcap_ranks + ranks_taken + 1, prof_type)  
+						cost = char_man.Get_Cost_At_Rank(precap_ranks + postcap_ranks + ranks_taken + 1)  
 						
 						# This error will happen if the character tries to train beyond the max ranks of the maneuver. This only happens if the character has multiple build_maneuverss for the same maneuver
 						if cost == 9999 or cost == "-":
@@ -1326,7 +1322,7 @@ class PostCap_Panel:
 						precap_points -= cost 
 						total_cost += cost
 						ranks_taken += 1
-						char_man.Train_Postcap_Ranks(current_exp, 1, prof_type)					
+						char_man.Train_Postcap_Ranks(current_exp, 1)					
 
 					if abort_loops == 1:
 						break
