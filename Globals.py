@@ -947,11 +947,11 @@ class Character:
             return (0, 0)
 
         # Otherwise calculate the cost for both levels and return the different or 0 if it is a negative amount
-        triple_train = max(0, tranks - 2 * (level + 1))
-        double_train = max(0, tranks - triple_train - (level + 1))
+        triple_train = max(0, tranks - 2 * (level + 2))
+        double_train = max(0, tranks - triple_train - (level + 2))
         single_train = max(0, tranks - triple_train - double_train)
-        prev_triple_train = max(0, prev_tranks - 2 * (level))
-        prev_double_train = max(0, prev_tranks - prev_triple_train - (level))
+        prev_triple_train = max(0, prev_tranks - 2 * (level+1))
+        prev_double_train = max(0, prev_tranks - prev_triple_train - (level+1))
         prev_single_train = max(0, prev_tranks - prev_triple_train - prev_double_train)
 
         pcost = skill_ptp * single_train + 2 * skill_ptp * double_train + 4 * skill_ptp * triple_train
