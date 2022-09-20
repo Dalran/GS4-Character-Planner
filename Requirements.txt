@@ -1,3 +1,2 @@
-matplotlib==3.5.3
 Pmw==2.1.1
 pyinstaller==5.4.1
