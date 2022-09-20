@@ -575,11 +575,20 @@ class Skills_Panel:
 				prev_pconverted += self.total_converted_ptp_by_level[lvl-1].get()	
 				prev_mconverted += self.total_converted_mtp_by_level[lvl-1].get()					
 	
+			#lets keep track skills we already calculated the regained value
+			calculated_skills = []
+
 			# Calculating the regained TP needs to be done for each skill at each level to get an accurate count of the TP. We need ALL the TP before we can determine if the skills cost can be meet
 			for row in globals.character.build_skills_list:
 				if lvl == 0:
 					break
 				
+				#check if we already calculated this skills regain, if so move on
+				if row.name.get() in calculated_skills:
+					continue
+				else:
+					calculated_skills.append(row.name.get())
+
 				sskill = globals.character.skills_list[row.name.get()]
 					
 				if sskill.subskill_group != "NONE":
@@ -635,12 +644,9 @@ class Skills_Panel:
 				if row.subskill_group == 'NONE':
 					subskill_ranks = 0
 				else:
-					try:
-						subskill_ranks = subskill_ranks_this_level[row.subskill_group] + globals.character.Get_Total_Ranks_Of_Subskill(bskill.name.get(), lvl-1, row.subskill_group)
-						subskill_ranks_this_level[row.subskill_group] += ranks_taken
-					except:
-						subskill_ranks = globals.character.Get_Total_Ranks_Of_Subskill(bskill.name.get(), lvl-1, row.subskill_group)
-						subskill_ranks_this_level[row.subskill_group] = ranks_taken
+					subskill_ranks = subskill_ranks_this_level.get(row.subskill_group,0) + globals.character.Get_Total_Ranks_Of_Subskill(bskill.name.get(), lvl-1, row.subskill_group)
+					subskill_ranks_this_level[row.subskill_group] = subskill_ranks_this_level.get(row.subskill_group,0) + ranks_taken
+
 				
 								
 				# Current skill would add too many ranks to the skill. This happens if a person tries to train the same skill (or subskill) more than once in a set range				

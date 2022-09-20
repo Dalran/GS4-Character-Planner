@@ -397,7 +397,7 @@ class Maneuvers_Panel:
 			elif int(goal) > man.max_ranks:
 				self.vars_dialog_errormsg.set("ERROR: Goal is greater than maximum maneuver ranks.")
 				return				
-			elif man.Get_Total_Cost_At_Rank(0, int(goal), globals.character.profession.type) > tlevel+1 and man.type == "combat":
+			elif man.Get_Total_Cost_At_Rank(0, int(goal)) > tlevel+1 and man.type == "combat":
 				self.vars_dialog_errormsg.set("ERROR: Combat Manevuer total cost cannot be greater than target level + 1.")
 				return					
 
@@ -541,7 +541,7 @@ class Maneuvers_Panel:
 	
 	# When a new maneuver is clicked from the maneuver drop down menu in the popup dialog box, this method will update the dialog box with the newly chosen maneuver
 	def Dialog_Menu_Onchange(self, name):
-		prof_type = globals.character.profession.type	
+
 	
 		if self.maneuver_mode.get() == "Combat":
 			man = globals.character.combat_maneuvers_list[name]
@@ -554,14 +554,13 @@ class Maneuvers_Panel:
 			self.vars_dialog_armor_maneuver.set(name)		
 			
 		self.vars_dialog_prerequisites.set(man.prerequisites_displayed)	
-		self.vars_dialog_info.set("%s,    %s,    %s,    %s,    %s" % (man.Get_Cost_At_Rank(1, prof_type), man.Get_Cost_At_Rank(2, prof_type), man.Get_Cost_At_Rank(3, prof_type), man.Get_Cost_At_Rank(4, prof_type), man.Get_Cost_At_Rank(5, prof_type)))		
+		self.vars_dialog_info.set("%s,    %s,    %s,    %s,    %s" % (man.Get_Cost_At_Rank(1), man.Get_Cost_At_Rank(2), man.Get_Cost_At_Rank(3), man.Get_Cost_At_Rank(4), man.Get_Cost_At_Rank(5)))		
 		
 	
 	# This function is called to display the popup dialog box that allows a user to add a new meneuver or edit an existing meneuver.
 	# Clicking the Add Maneuver button in the Build Header frame will show the Add version of this box
 	# Clicking an existing Maneuver's Edit button will show the Edit version of this box	
 	def Add_Edit_Button_Onclick(self, location):
-		prof_type = globals.character.profession.type
 
 		self.dialog_combat_names_menu.grid_remove()
 		self.dialog_shield_names_menu.grid_remove()
@@ -641,7 +640,7 @@ class Maneuvers_Panel:
 				self.dialog_box.component("buttonbox").insert("Update Maneuver", command=lambda v="Update Maneuver": self.Dialog_Box_Onclick(v))	
 			
 		self.vars_dialog_prerequisites.set(char_man.prerequisites_displayed)	
-		self.vars_dialog_info.set("%s,    %s,    %s,    %s,    %s" % (char_man.Get_Cost_At_Rank(1, prof_type), char_man.Get_Cost_At_Rank(2, prof_type), char_man.Get_Cost_At_Rank(3, prof_type), char_man.Get_Cost_At_Rank(4, prof_type), char_man.Get_Cost_At_Rank(5, prof_type) ))		
+		self.vars_dialog_info.set("%s,    %s,    %s,    %s,    %s" % (char_man.Get_Cost_At_Rank(1), char_man.Get_Cost_At_Rank(2), char_man.Get_Cost_At_Rank(3), char_man.Get_Cost_At_Rank(4), char_man.Get_Cost_At_Rank(5) ))		
 		self.dialog_box.show()
 		self.dialog_box.grab_set()
 		
@@ -772,7 +771,6 @@ class Maneuvers_Panel:
 	def Plan_Training_Schedule(self, style):
 		error_text = ""
 		schedule_names = []
-		prof_type = globals.character.profession.type
 		
 		total_available_array = [tkinter.IntVar() for i in range(101)]
 		total_cost_array = [tkinter.IntVar() for i in range(101)]
@@ -849,18 +847,18 @@ class Maneuvers_Panel:
 							
 					cost_at_level = 0	
 					prev_leftover = 0
-					next_rank_cost = row.Get_Cost_At_Rank(row.total_ranks_by_level[lvl].get() + 1, prof_type)  
-					tcost = row.Get_Total_Cost_At_Rank(0, row.total_ranks_by_level[lvl].get() + 1, prof_type)
+					next_rank_cost = row.Get_Cost_At_Rank(row.total_ranks_by_level[lvl].get() + 1)  
+					tcost = row.Get_Total_Cost_At_Rank(0, row.total_ranks_by_level[lvl].get() + 1)
 									
 					while available >= next_rank_cost and (type == "Armor" or lvl+1 >= tcost):
 						cost_at_level += next_rank_cost
 						available -= next_rank_cost
 						ranks_taken += 1
-						row.Train_New_Ranks(lvl, 1, prof_type)	
+						row.Train_New_Ranks(lvl, 1)	
 						if ranks_needed <= ranks_taken:
 							break
-						next_rank_cost = row.Get_Cost_At_Rank(row.total_ranks_by_level[lvl].get() + 1, prof_type)    
-						tcost = row.Get_Total_Cost_At_Rank(0, row.total_ranks_by_level[lvl].get() + 1, prof_type)
+						next_rank_cost = row.Get_Cost_At_Rank(row.total_ranks_by_level[lvl].get() + 1)    
+						tcost = row.Get_Total_Cost_At_Rank(0, row.total_ranks_by_level[lvl].get() + 1)
 
 					if cost_at_level > 0:
 						total_cost_array[lvl].set( cost_at_level + total_cost_array[lvl].get() )
@@ -988,17 +986,10 @@ class Build_List_Maneuver:
 		self.ManP_Edit_Button = ""
 		self.type = type				
 		
-		if globals.character.profession.type == "square" or self.type != "Combat":
-			modifier = 1
-		elif globals.character.profession.type == "semi":
-			modifier = 1.5
-		elif globals.character.profession.type == "pure":
-			modifier = 2
-			
 		i=0
 		for rank in ranks_arr:
 			if rank != "-":
-				self.ranks[i].set( math.floor(int(rank) * modifier) )
+				self.ranks[i].set( math.floor(int(rank) ) )
 			else:
 				self.ranks[i].set("-")			
 			i += 1
