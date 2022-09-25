@@ -61,22 +61,6 @@ class Maneuver:
     def Train_Postcap_Ranks(self, exp, ranks):
     def Postcap_Get_Total_Ranks_Closest_To_Interval(self, interval):
 
-class Gear:
-    def __init__(self, order, name, enchantment, weight, skill_names, type):
-    def Create_LdP_row(self, parent):
-    def Set_Gear_Traits(self, name):
-    def Update_Display_Details(self):
-    def Update_Progression_Name(self):
-
-class Effect:
-    def __init__(self, order, name, type, display_type, details, effect_tags, scaling_arr, function, options, hidden):
-    def Create_ProgP_row(self, parent):
-    def Create_LdP_row(self, parent):
-    def Update_Row_Heights(self):
-    def Calculate_Tag_Bonus(self, effect_tag, level):
-    def Scroll_Details_Frame(self, event):
-    def Scroll_Scaling_Frame(self, event):
-
 class Information_Dialog:
     def __init__(self):
     def Set_To_Default(self):
@@ -181,10 +165,6 @@ class Character:
         self.postcap_armor_training_by_interval = collections.OrderedDict()
         self.postcap_total_armor_cost_by_interval = collections.OrderedDict()
 
-        # Loadout Panel variables
-        self.loadout_gear_build_list = []
-        self.loadout_effects_build_list = []
-
         # Progression Panel variables
         self.LdP_Gear_List_Updated = 0
         self.LdP_Effects_List_Updated = 0
@@ -198,7 +178,6 @@ class Character:
         skills_panel = panels["Skills"]
         man_panel = panels["Maneuvers"]
         postcap_panel = panels["Post Cap"]
-        loadout_panel = panels["Loadout"]
         #		summary_panel = panels["Summary"]
         read_mode = ""
 
@@ -215,10 +194,6 @@ class Character:
         skills_panel.ClearAll_Button_Onclick()
         man_panel.Clear_Button_Onclick("All")
         postcap_panel.Clear_Button_Onclick("All")
-        loadout_panel.Gear_ClearAll_Button_Onclick()
-        loadout_panel.Effects_ClearAll_Button_Onclick()
-        LdP_Gear_List_Updated = 1
-        LdP_Effects_List_Updated = 1
 
         # Read the file line by line and remove the end of line character "\n" at the end of each line if it is present
         line = char_file.readline()
@@ -391,48 +366,6 @@ class Character:
                                                                    man.cost_by_rank[2], man.cost_by_rank[3],
                                                                    man.cost_by_rank[4])))
 
-
-            # Loadout lines for gear items and effects
-            elif read_mode == "gear":
-                location = len(self.loadout_gear_build_list)
-                gear = Gear(location + 1, parts[0], parts[3], parts[4], parts[2], parts[1])
-                gear.Create_LdP_row(loadout_panel.Gear_List_Frame.interior())
-                gear.LdP_Row.grid(row=location, column=0)
-                gear.Update_Display_Details()
-                gear.Set_Gear_Traits("")
-
-                self.loadout_gear_build_list.insert(location, gear)
-
-            elif read_mode == "effects":
-                location = len(self.loadout_effects_build_list)
-                length = len(parts)
-                scaling_arr = collections.OrderedDict()
-
-                if length == 3 and parts[2] == "NONE":
-                    pass
-                else:
-                    for i in range(2, length):
-                        data = parts[i].split("=")
-                        scaling_arr[data[0]] = data[1]
-
-                db_cur.execute(
-                    "SELECT type, details, effect_tags, scaling_tags, function, override_options FROM Effects WHERE name = \"%s\" " % (
-                    parts[0]))
-                db_con.commit()
-                data = db_cur.fetchone()
-
-                type = ""
-                for key, val in LdP_effect_display_types.items():
-                    if val == data["type"]:
-                        type = key
-                        break
-                self.loadout_effects_build_list.insert(location,
-                                                       Effect(location, parts[0], type, data["type"], data["details"],
-                                                              data["effect_tags"], scaling_arr, data["function"],
-                                                              data["override_options"], parts[1]))
-
-                self.loadout_effects_build_list[location].Create_LdP_row(loadout_panel.Effects_List_Frame.interior())
-
             # End of the loop, read the next line.
             line = char_file.readline()
 
@@ -567,37 +500,7 @@ class Character:
         postcap_panel.goal_mode.set("Skills")
         postcap_panel.PostCap_Style_Onchange("Skills")
 
-        # Loadout panel. Load the gear list and effects list
-        i = 0
-        for gear in self.loadout_gear_build_list:
-            gear.order.set(i + 1)
-            gear.LdP_Edit_Button.config(command=lambda v=i: loadout_panel.Gear_Add_Edit_Button_Onclick(v))
-            i += 1
-        loadout_panel.gear_menu_size = i + 1
-        if loadout_panel.gear_menu_size > 1:
-            for j in range(2, loadout_panel.gear_menu_size + 1):
-                if j < loadout_panel.gear_menu_size + 1:
-                    loadout_panel.dialog_gear_edit_order_menu["menu"].insert_command("end", label=j - 1, command=lambda
-                        v=j - 1: loadout_panel.vars_dialog_order.set(v))
-                loadout_panel.dialog_gear_add_order_menu["menu"].insert_command("end", label=j, command=lambda
-                    v=j: loadout_panel.vars_dialog_order.set(v))
-
-        i = 0
-        for effect in self.loadout_effects_build_list:
-            effect.order.set(i + 1)
-            effect.LdP_Build_Row.grid(row=i, column=0)
-            effect.LdP_Edit_Button.config(command=lambda v=i: loadout_panel.Effects_Add_Edit_Button_Onclick(v))
-            i += 1
-        loadout_panel.effects_menu_size = i + 1
-        if loadout_panel.effects_menu_size > 1:
-            for j in range(2, loadout_panel.effects_menu_size + 1):
-                if j < loadout_panel.effects_menu_size + 1:
-                    loadout_panel.dialog_effect_edit_order_menu["menu"].insert_command("end", label=j - 1,
-                                                                                       command=lambda
-                                                                                           v=j - 1: loadout_panel.vars_dialog_order.set(
-                                                                                           v))
-                loadout_panel.dialog_effect_add_order_menu["menu"].insert_command("end", label=j, command=lambda
-                    v=j: loadout_panel.vars_dialog_order.set(v))
+        
 
         # We are done. Change to the first panel.
         notebook.selectpage("Statistics")
@@ -685,23 +588,7 @@ class Character:
             for man in self.postcap_build_armor_maneuvers_list:
                 char_file.write("%s:%s:%s\n" % (man.name.get(), man.hide.get(), man.goal.get()))
 
-        if self.loadout_gear_build_list:
-            char_file.write("==GEAR BUILD LIST==\n")
-            for gear in self.loadout_gear_build_list:
-                char_file.write("%s:%s:%s:%s:%s\n" % (
-                gear.name.get(), gear.dialog_type, gear.skills, gear.enchantment, gear.weight))
-
-        if self.loadout_effects_build_list:
-            char_file.write("==EFFECTS BUILD LIST==\n")
-            for effect in self.loadout_effects_build_list:
-                scaling_info = ":"
-                if len(effect.scaling_arr) > 0:
-                    for key, value in effect.scaling_arr.items():
-                        scaling_info += "%s=%s:" % (key, value)
-                    scaling_info = scaling_info[:-1]
-                else:
-                    scaling_info = ":NONE"
-                char_file.write("%s:%s%s\n" % (effect.name.get(), effect.hide.get(), scaling_info))
+        
 
     # Calculate the PTP, MTP, Health, Mana, Stamina, Spirit over 100 levels. This is called after the statistics growth method has been called.
     def Update_Statistics(self):
@@ -2042,244 +1929,6 @@ class Maneuver:
         return ranks
 
 
-# "Gear" is any in game item that can be equipped and used in combat such as weapons, shields, and armor
-# Gear objects are used in the Loadout panel
-class Gear:
-    def __init__(self, order, name, enchantment, weight, skill_names, type):
-        global LdP_gear_display_types
-
-        self.name = tkinter.StringVar()
-        self.order = tkinter.StringVar()
-        self.display_type = tkinter.StringVar()
-        self.display_details = tkinter.StringVar()
-        self.dialog_type = type
-        self.skills = skill_names
-        self.enchantment = enchantment
-        self.weight = int(weight)
-        self.ProgP_display_name = ""
-
-        self.gear_traits = {}  # Gear is a generic class that needs to hold any item of equipment, this dictionary will hold it's values. I.e armor hindrance or weapon base speed
-
-        self.LdP_Row = ""
-        self.LdP_Edit_Button = ""
-
-        # Initialize defaults
-        self.name.set(name)
-        self.order.set(order)
-        self.display_details.set("")
-        self.display_type.set(LdP_gear_display_types[skill_names])
-
-        self.Update_Progression_Name()
-
-    # Create the build list row used in the Loadout panel
-    def Create_LdP_row(self, parent):
-        self.LdP_Row = tkinter.Frame(parent)
-        self.LdP_Row.bindtags("LdP_gear")
-
-        L1 = tkinter.Label(self.LdP_Row, width=5, bg="lightgray", textvariable=self.order)
-        L1.grid(row=0, column=0, padx="1", pady="1")
-        L1.bindtags("LdP_gear")
-        L2 = tkinter.Label(self.LdP_Row, width="22", anchor="w", bg="lightgray", textvariable=self.name)
-        L2.grid(row=0, column=1, padx="1", pady="1")
-        L2.bindtags("LdP_gear")
-        L3 = tkinter.Label(self.LdP_Row, width="8", anchor="w", bg="lightgray", textvariable=self.display_type)
-        L3.grid(row=0, column=2, padx="1", pady="1")
-        L3.bindtags("LdP_gear")
-        L4 = tkinter.Label(self.LdP_Row, width=20, anchor="w", bg="lightgray", textvariable=self.display_details)
-        L4.grid(row=0, column=3, padx="1")
-        L4.bindtags("LdP_gear")
-        self.LdP_Edit_Button = tkinter.Button(self.LdP_Row, text="Edit", command="")
-        self.LdP_Edit_Button.grid(row=0, column=7, padx="3")
-
-    # Because gear is generic, it doesn't have a specific fields for traits unique to a certain type of gear
-    # such as action penalty, this funtion is used to create a dictionary for those traits.
-    def Set_Gear_Traits(self, name):
-        global db_cur, db_con
-        self.gear_traits = {}
-        if self.dialog_type == "Armor":
-            table = "Armor"
-            fields = "roundtime, action_penalty, base_weight, minor_spiritual_spell_hindrance, major_spiritual_spell_hindrance, cleric_spell_hindrance, minor_elemental_spell_hindrance, minor_mental_spell_hindrance, major_elemental_spell_hindrance, major_mental_spell_hindrance, savant_spell_hindrance, ranger_spell_hindrance, sorcerer_spell_hindrance, wizard_spell_hindrance, bard_spell_hindrance, empath_spell_hindrance, paladin_spell_hindrance, max_spell_hindrance, roundtime_train_off_ranks, AG"
-        elif self.dialog_type == "Shields":
-            table = "Shields"
-            fields = "size, melee_size_modifer, ranged_size_modifer, ranged_size_bonus, dodging_shield_factor, dodging_size_penalty"
-        else:
-            table = "Weapons"
-            fields = "base_speed, minimum_speed"
-
-        if name == "":
-            name = self.name.get()
-        query = "SELECT %s FROM %s WHERE name = '%s'" % (fields, table, name)
-        trait_arr = fields.split(", ")
-
-        db_cur.execute(query)
-        db_con.commit()
-        data = db_cur.fetchall()
-
-        for item in data:
-            for trait in trait_arr:
-                self.gear_traits[trait] = item[trait]
-
-    # This method updates the details section of the LdP_row found on the Loadout panel
-    # Details will show the enchantment value, enchantment time (ie 3x) and weight
-    def Update_Display_Details(self):
-        whole_bonus = int(int(self.enchantment) / 5)
-        faction_bonus = int(int(self.enchantment) % 5)
-
-        if (faction_bonus > 0):
-            faction_text = ".5"
-        else:
-            faction_text = ""
-
-        weight_text = ", %s lb" % self.weight
-
-        self.display_details.set("%+d (%s%sx)%s" % (int(self.enchantment), whole_bonus, faction_text, weight_text))
-
-    # Updates the way the gear is represented in the Progression panel gear menus
-    def Update_Progression_Name(self):
-        self.ProgP_display_name = "%s. %s (%+d)" % (self.order.get(), self.name.get(), int(self.enchantment))
-
-
-# An "Effect" is a spell, enhancive or really any kind of buff/debuff that can affect the characters attributes
-# Effects are created on the Loadout panel, factored into the calculations made on the Progresson panel, and
-# stored as part of the global character object
-class Effect:
-    def __init__(self, order, name, type, display_type, details, effect_tags, scaling_arr, function, options, hidden):
-        self.name = tkinter.StringVar()
-        self.type = tkinter.StringVar()
-        self.display_type = tkinter.StringVar()
-        self.order = tkinter.StringVar()
-        self.scaling = tkinter.StringVar()
-        self.details = tkinter.StringVar()
-        self.effect_tags = effect_tags
-        self.scaling_arr = scaling_arr
-        self.function = function
-        self.options = options
-        self.LdP_Build_Row = ""
-        self.LdP_Edit_Button = ""
-        self.LdP_details_frame_label = ""
-        self.LdP_scaling_frame_label = ""
-        self.hide = tkinter.StringVar()
-        self.ProgP_Build_Row = ""
-        self.ProgP_scaling_frame_label = ""
-
-        scaling = ""
-
-        # Initialize defaults
-        self.name.set(name)
-        self.type.set(type)
-        self.display_type.set(display_type)
-        self.order.set(order)
-        self.details.set(details)
-        self.hide.set(hidden)
-
-        if len(scaling_arr) == 0:
-            scaling = "NONE"
-        else:
-            for key, value in scaling_arr.items():
-                scaling += "%s: %s\n" % (key, value)
-            scaling = scaling[:-1]
-        self.scaling.set(scaling)
-
-    # Create the build list row used in the Loadout panel
-    def Create_LdP_row(self, parent):
-        self.LdP_Build_Row = tkinter.Frame(parent)
-
-        self.details_frame = Pmw.ScrolledFrame(self.LdP_Build_Row, usehullsize=1, hull_width=196, hull_height=36)
-        self.details_frame.component("borderframe").config(borderwidth=0)
-        self.details_frame.configure(hscrollmode="none", vscrollmode="static")
-
-        self.scaling_frame = Pmw.ScrolledFrame(self.LdP_Build_Row, usehullsize=1, hull_width=146, hull_height=36)
-        self.scaling_frame.component("borderframe").config(borderwidth=0)
-        self.scaling_frame.configure(hscrollmode="none", vscrollmode="static")
-
-        # Creates the order, name, and type fields
-        L1 = tkinter.Label(self.LdP_Build_Row, width=5, height=2, bg="lightgray", textvariable=self.order)
-        L1.grid(row=0, column=0, padx="1", pady="1")
-        L1.bindtags("LdP_effects")
-        L2 = tkinter.Label(self.LdP_Build_Row, width="15", height=2, anchor="c", wraplength=100, bg="lightgray",
-                           textvariable=self.name)
-        L2.grid(row=0, column=1, padx="1", pady="1")
-        L2.bindtags("LdP_effects")
-        L3 = tkinter.Label(self.LdP_Build_Row, width="8", height=2, anchor="c", wraplength=70, bg="lightgray",
-                           textvariable=self.display_type)
-        L3.grid(row=0, column=2, padx="1", pady="1")
-        L3.bindtags("LdP_effects")
-
-        # The detail and scaling frames can have more that 2 lines of text. They are setup to perform word wrapping and dynamic height adjustments
-        self.details_frame.grid(row=0, column=3, sticky="nw", padx="1", pady="1")
-        self.LdP_details_frame_label = tkinter.Label(self.details_frame.interior(), width=27, justify="left",
-                                                     anchor="nw", wraplength=175, bg="lightgray",
-                                                     textvariable=self.details)
-        self.LdP_details_frame_label.bind("<MouseWheel>", self.Scroll_Details_Frame)
-        self.LdP_details_frame_label.grid(row=0, column=0)
-
-        self.scaling_frame.grid(row=0, column=4, sticky="nw")
-        self.LdP_scaling_frame_label = tkinter.Label(self.scaling_frame.interior(), width="20", anchor="nw",
-                                                     justify="left", bg="lightgray", textvariable=self.scaling)
-        self.LdP_scaling_frame_label.bind("<MouseWheel>", self.Scroll_Scaling_Frame)
-        self.LdP_scaling_frame_label.grid(row=0, column=0)
-
-        self.LdP_Edit_Button = tkinter.Button(self.LdP_Build_Row, text="Edit", command="")
-        self.LdP_Edit_Button.grid(row=0, column=7, padx="3")
-
-        self.Update_Row_Heights()
-
-    # Create the build list row used in the Loadout panel
-    def Create_ProgP_row(self, parent):
-        self.ProgP_Build_Row = tkinter.Frame(parent)
-        self.scaling_frame = Pmw.ScrolledFrame(self.ProgP_Build_Row, usehullsize=1, hull_width=136, hull_height=36)
-        self.scaling_frame.component("borderframe").config(borderwidth=0)
-        self.scaling_frame.configure(hscrollmode="none", vscrollmode="static")
-
-        tkinter.Checkbutton(self.ProgP_Build_Row, variable=self.hide).grid(row=0, column=0, sticky="w")
-        L2 = tkinter.Label(self.ProgP_Build_Row, width="15", height="2", anchor="c", wraplength=100, bg="lightgray",
-                           textvariable=self.name)
-        L2.grid(row=0, column=1, padx="3", pady="2")
-        L2.bindtags("ProgP_effects")
-        L3 = tkinter.Label(self.ProgP_Build_Row, width="8", height=2, anchor="c", wraplength=70, bg="lightgray",
-                           textvariable=self.display_type)
-        L3.grid(row=0, column=2, padx="1", pady="1")
-        L3.bindtags("ProgP_effects")
-        self.scaling_frame.grid(row=0, column=3, padx="1", pady="1")
-        self.LdP_scaling_frame_label = tkinter.Label(self.scaling_frame.interior(), width="16", anchor="nw",
-                                                     justify="left", bg="lightgray", textvariable=self.scaling)
-        self.LdP_scaling_frame_label.bind("<MouseWheel>", self.Scroll_Scaling_Frame)
-        self.LdP_scaling_frame_label.grid(row=0, column=0)
-
-        self.Update_Row_Heights()
-
-    # If the height of the details or scaling frames are 0, the frame will automatically adjust it's height to the correct number in regard to the text in it.
-    # However, the height has to be atleast 2 in order to match the general size effect row. To fix this issue, count the number of text lines and if it is
-    # 2 lines or less (only 1 "\n") set the height to 2 manually
-    def Update_Row_Heights(self):
-        if (self.details.get().count("\n") > 0):
-            self.LdP_details_frame_label.config(height="0")
-        else:
-            self.LdP_details_frame_label.config(height="2")
-
-        if (self.scaling.get().count("\n") > 0):
-            self.LdP_scaling_frame_label.config(height="0")
-            self.LdP_scaling_frame_label.config(height="0")
-        else:
-            self.LdP_scaling_frame_label.config(height="2")
-            self.LdP_scaling_frame_label.config(height="2")
-
-    # Every effect is linked to a coresponding method in Calculations.py that calculates
-    # a bonus/penalty depending on what effect tag is sent to it. Using eval and storing
-    # the method names in a field in the planners database was the best way I could figure
-    # out how to find the bonuses with as little bloating as possible.
-    def Calculate_Tag_Bonus(self, effect_tag, level):
-        return eval("calculations.%s" % self.function)(self, effect_tag, level)
-
-    # Allows the Detail Frame of the LdP_row to be scrollable with the mouse wheel
-    def Scroll_Details_Frame(self, event):
-        self.details_frame.yview("scroll", -1 * (event.delta / 120), "units")
-
-    # Allows the Detail Frame of the LdP_row to be scrollable with the mouse wheel
-    def Scroll_Scaling_Frame(self, event):
-        self.scaling_frame.yview("scroll", -1 * (event.delta / 120), "units")
-
-
 # The Planner's "Error Box". This dialog box will appear when an error or warning is triggered by the user.
 class Information_Dialog:
     def __init__(self):
@@ -2381,111 +2030,6 @@ skill_names = []
 combat_maneuver_names = []
 shield_maneuver_names = []
 armor_maneuver_names = []
-
-# Loadout Panel globals
-LdP_Gear_List_Updated = 0  # Indicates that a change has been made to the Loadout Panel's gear list. Progression Panel needs this to have an accurate loadout lists
-LdP_Effects_List_Updated = 0  # Indicates that a change has been made to the Loadout Panel's effects list. Progression Panel needs this to have an accurate loadout lists
-
-LdP_gear_display_types = {'None': 'None', 'Brawling': 'Brawling', 'Edged Weapons': 'OHE', 'Blunt Weapons': 'OHB',
-                          'Two-Handed Weapons': 'THW', 'Polearm Weapons': 'Polearm', 'Ranged Weapons': 'Ranged',
-                          'Thrown Weapons': 'Thrown', 'UAC Weapons': 'UAC', 'Armor': 'Armor', 'Shields': 'Shield',
-                          'Edged Weapons/Brawling': 'OHE/BRW', 'Edged Weapons/Two-Handed Weapons': 'OHE/THW',
-                          "Spell Aiming": 'Spell'}
-
-LdP_effect_display_types = collections.OrderedDict()
-LdP_effect_display_types['Minor Spiritual (100s)'] = 'MnS Spell'
-LdP_effect_display_types['Major Spiritual (200s)'] = 'MjS Spell'
-LdP_effect_display_types['Cleric Base (300s)'] = 'Clrc Spell'
-LdP_effect_display_types['Minor Elemental (400s)'] = 'MnE Spell'
-LdP_effect_display_types['Major Elemental (500s)'] = 'MjE Spell'
-LdP_effect_display_types['Ranger Base (600s)'] = 'Rngr Spell'
-LdP_effect_display_types['Sorcerer Base (700s)'] = 'Sorc Spell'
-LdP_effect_display_types['Wizard Base (900s)'] = 'Wiz Spell'
-LdP_effect_display_types['Bard Base (1000s)'] = 'Spellsong'
-LdP_effect_display_types['Empath Base (1100s)'] = 'Emp Spell'
-LdP_effect_display_types['Minor Mental (1200s)'] = 'MnM Spell'
-# LdP_effect_display_types['Major Mental (1300s)'] = 'MjM Spell'
-# LdP_effect_display_types['Savant Base (1400s)'] = 'Svnt Spell'
-LdP_effect_display_types['Paladin Base (1600s)'] = 'Pala Spell'
-LdP_effect_display_types['Arcane (1700s)'] = 'Arc Spell'
-LdP_effect_display_types['Maneuvers'] = 'Maneuver'
-LdP_effect_display_types['Society Powers'] = 'Society'
-LdP_effect_display_types['Special Abilities'] = 'Special Ability'
-LdP_effect_display_types['Enhancives (Resources)'] = 'Enhancive Resource'
-LdP_effect_display_types['Enhancives (Skills)'] = 'Enhancive Skill'
-LdP_effect_display_types['Enhancives (Statistics)'] = 'Enhancive Statistic'
-LdP_effect_display_types['Generic Bonus'] = 'Generic Bonus'
-LdP_effect_display_types['Status Effects'] = 'Status'
-LdP_effect_display_types['Room Effects'] = 'Room\nEffect'
-LdP_effect_display_types['Flares'] = 'Flare'
-LdP_effect_display_types['Items'] = 'Item'
-# LdP_effect_display_types['Other'] = 'Other'
-
-
-LdP_effect_display_scaling = {'Spell Research, Minor Spiritual ranks': 'Minor Spiritual',
-                              'Spell Research, Major Spiritual ranks': 'Major Spiritual',
-                              'Spell Research, Cleric ranks': 'Cleric',
-                              'Spell Research, Minor Elemental ranks': 'Minor Elemental',
-                              'Spell Research, Major Elemental ranks': 'Major Elemental',
-                              'Spell Research, Ranger ranks': 'Ranger', 'Spell Research, Sorcerer ranks': 'Sorcerer',
-                              'Spell Research, Wizard ranks': 'Wizard', 'Spell Research, Bard ranks': 'Bard',
-                              'Spell Research, Empath ranks': 'Empath',
-                              'Spell Research, Minor Mental ranks': 'Minor Mental',
-                              #					  'Spell Research, Major Mental ranks':'Major Mental', 'Spell Research, Savant ranks':'Savant',
-                              'Spell Research, Paladin ranks': 'Paladin',
-                              'Elemental Lore, Air ranks': 'Air', 'Elemental Lore, Earth ranks': 'Earth',
-                              'Elemental Lore, Fire ranks': 'Fire', 'Elemental Lore, Water ranks': 'Water',
-                              'Mental Lore, Divination ranks': 'Divination',
-                              'Mental Lore, Manipulation ranks': 'Manipulation',
-                              'Mental Lore, Telepathy ranks': 'Telepathy',
-                              'Mental Lore, Transference ranks': 'Transference',
-                              'Mental Lore, Transformation ranks': 'Transformation',
-                              'Spiritual Lore, Blessings ranks': 'Blessings',
-                              'Spiritual Lore, Religion ranks': 'Religion',
-                              'Spiritual Lore, Summoning ranks': 'Summoning',
-                              'Sorcerous Lore, Demonology ranks': 'Demonology',
-                              'Sorcerous Lore, Necromancy ranks': 'Necromancy',
-                              'Elemental Mana Control ranks': 'Elemental MC', 'Mental Mana Control ranks': 'Mental MC',
-                              'Spiritual Mana Control ranks': 'Spiritual MC',
-                              'Multi-Opponent Combat ranks': 'MOC',
-                              'Maneuver ranks': 'Maneuver ranks', "Guild skill ranks": "Guild skill ranks",
-                              'Council of Light rank': 'COL rank', 'Guardians of Sunfist rank': 'GoS rank',
-                              'Order of Voln rank': 'Voln rank',
-                              # The effects below do not have dynamic scaling
-                              'Health recovery bonus': 'Health recovery', 'Health maximum bonus': 'Maximum health',
-                              'Mana recovery bonus': 'Mana recovery', 'Mana maximum bonus': 'Maximum mana',
-                              'Stamina recovery bonus': 'Stam recovery', 'Stamina maximum bonus': 'Maximum stam',
-                              'Spirit recovery bonus': 'Spirit recovery', 'Spirit maximum bonus': 'Maximum spirit',
-                              'Statistic increase': 'Statistic increase', 'Statistic bonus': 'Statistic bonus',
-                              'Skill ranks': 'Skill ranks', 'Skill bonus': 'Skill bonus',
-                              'All AS bonus': 'All AS bonus', 'Melee AS bonus': 'Melee AS bonus',
-                              'Ranged AS bonus': 'Ranged AS bonus', 'Bolt AS bonus': 'Bolt AS bonus',
-                              'UAF bonus': 'UAF bonus',
-                              'All DS bonus': 'All DS bonus', 'Melee DS bonus': 'Melee DS bonus',
-                              'Ranged DS bonus': 'Ranged DS bonus', 'Bolt DS bonus': 'Bolt DS bonus',
-                              'All CS bonus': 'All CS bonus', 'Elemental CS bonus': 'Ele CS bonus',
-                              'Mental CS bonus': 'Mental CS bonus', 'Spiritual CS bonus': 'Spirit CS bonus',
-                              'Sorcerer CS bonus': 'Sorc CS bonus',
-                              'All TD bonus': 'All TD bonus', 'Elemental TD bonus': 'Ele TD bonus',
-                              'Mental TD bonus': 'Mental TD bonus', 'Spiritual TD bonus': 'Spirit TD bonus',
-                              'Sorcerer TD bonus': 'Sorc TD bonus',
-                              'Tier': 'Tier'}
-
-# Progression Panel globals
-summation_bonuses = [[0],
-                     [1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91, 105, 120, 136, 153, 171, 190, 210, 231, 253, 276,
-                      300],
-                     [2, 5, 9, 14, 20, 27, 35, 44, 54, 65, 77, 90, 104, 119, 135, 152, 170, 189, 209, 230, 252, 275,
-                      299],
-                     [3, 7, 12, 18, 25, 33, 42, 52, 63, 75, 88, 102, 117, 133, 150, 168, 187, 207, 228, 250, 273, 297],
-                     [4, 9, 15, 22, 30, 39, 49, 60, 72, 85, 99, 114, 130, 147, 165, 184, 204, 225, 247, 270, 294],
-                     [5, 11, 18, 26, 35, 45, 56, 68, 81, 95, 110, 126, 143, 161, 180, 200, 221, 243, 266, 290],
-                     [6, 13, 21, 30, 40, 51, 63, 76, 90, 105, 121, 138, 156, 175, 195, 216, 238, 261, 285],
-                     [7, 15, 24, 34, 45, 57, 70, 84, 99, 115, 132, 150, 169, 189, 210, 232, 255, 279],
-                     [8, 17, 27, 38, 50, 63, 77, 92, 108, 125, 143, 162, 182, 203, 225, 248, 272, 297],
-                     [9, 19, 30, 42, 55, 69, 84, 100, 117, 135, 154, 174, 195, 217, 240, 264, 289],
-                     [10, 21, 33, 46, 60, 75, 91, 108, 126, 145, 165, 186, 208, 231, 255, 280]
-                     ]
 
 # Character global needs to be declared last since it uses all the globals decalared above
 character = Character()

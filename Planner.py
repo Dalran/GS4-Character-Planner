@@ -26,7 +26,6 @@ import Misc_Panel as MiP
 import Skills_Panel as SkP
 import Maneuvers_Panel as ManP
 import PostCap_Panel as PcP
-import Loadout_Panel as LdP
 
 from time import sleep
 
@@ -106,8 +105,6 @@ class Planner:
         globals.panels['Skills'].ClearAll_Button_Onclick()
         globals.panels['Maneuvers'].Clear_Button_Onclick("All")
         globals.panels['Post Cap'].Clear_Button_Onclick("All")
-        globals.panels['Loadout'].Gear_ClearAll_Button_Onclick()
-        globals.panels['Loadout'].Effects_ClearAll_Button_Onclick()
 
         globals.root.title("%s %s - %s" % (globals.title, globals.version, globals.char_name))
         globals.notebook.selectpage("Statistics")
@@ -137,7 +134,7 @@ class Planner:
         self.pages['Skills'] = tkinter.Frame(notebook.add('Skills'), background="white")
         self.pages['Maneuvers'] = tkinter.Frame(notebook.add('Maneuvers'), background="white")
         self.pages['Post Cap'] = tkinter.Frame(notebook.add('Post Cap'), background="white")
-        self.pages['Loadout'] = tkinter.Frame(notebook.add('Loadout'), background="white")
+
 
         for index, key in enumerate(self.pages):
             self.pages[key].grid(row=0, column=index)
@@ -147,8 +144,7 @@ class Planner:
                           'Misc': MiP.Misc_Panel(self.pages['Misc']),
                           'Skills': SkP.Skills_Panel(self.pages['Skills']),
                           'Maneuvers': ManP.Maneuvers_Panel(self.pages['Maneuvers']),
-                          'Post Cap': PcP.PostCap_Panel(self.pages['Post Cap']),
-                          'Loadout': LdP.Loadout_Panel(self.pages['Loadout'])}
+                          'Post Cap': PcP.PostCap_Panel(self.pages['Post Cap'])}
 
 
         # This needs a full refactor.  Christ everything does
