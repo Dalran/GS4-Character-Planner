@@ -1,3 +1,15 @@
+-Version 2.7.0- (Date:9/28/2022)
+PLANNER & DATABASE
+-Updated to python 3.10
+-Updated all skill, cman, shield, and armor point costs
+-Update CMAN calculations to remove pure and semi tax
+-Fixed several skill costs calculations related to sub skills under magic research and lores
+-Fixed several performance issues (Thanks go to Daggeron for this)
+-Removed Progression and Loadout panels
+    -Panels were significantly out of date and the libs had compatibility issues. 
+    -Effort to update wasn't worth it for now.
+    -Won't be reimplementing in the python based version. Will re-valuate in the rewrite
+
 -Version 2.6.5- (Date: 12/13/2018)
 
 PLANNER

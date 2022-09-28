@@ -1975,7 +1975,7 @@ class Information_Dialog:
 
 # Planner globals
 title = "Hymore Character Planner"
-version = "v2.6.5"
+version = "v2.6.6"
 char_name = "New Character"
 root = tkinter.Tk()
 
